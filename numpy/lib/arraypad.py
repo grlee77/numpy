@@ -799,7 +799,8 @@ def pad(array, pad_width, mode='constant', **kwargs):
         # And apply along each axis
         for axis in range(padded.ndim):
             np.apply_along_axis(
-                function, axis, padded, pad_width[axis], axis, kwargs)
+                function, axis, padded, pad_width[axis], axis, kwargs,
+                inplace=True)
         return padded
 
     # Make sure that no unsupported keywords were passed for the current mode
