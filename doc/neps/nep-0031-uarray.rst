@@ -100,7 +100,7 @@ Usage and Impact
 This NEP allows for global and context-local overrides, as well as
 automatic overrides a-la ``__array_function__``.
 
-Here are some use-cases this NEP would enable, besides the 
+Here are some use-cases this NEP would enable, besides the
 first one stated in the motivation section:
 
 The first is allowing alternate dtypes to return their
@@ -113,7 +113,7 @@ respective arrays.
 
 The second is allowing overrides for parts of the API.
 This is to allow alternate and/or optimised implementations
-for ``np.linalg``, BLAS, and ``np.random``.
+for ``np.linalg``, BLAS, and ``np.random``. This can be done either globally
 
 .. code:: python
 
@@ -124,7 +124,11 @@ for ``np.linalg``, BLAS, and ``np.random``.
     np.set_global_backend(pyfftw)
 
     # Uses pyfftw without monkeypatching
-    np.fft.fft(numpy_array)    
+    np.fft.fft(numpy_array)
+
+or in a local context
+
+.. code:: python
 
     with np.set_backend(pyfftw) # Or mkl_fft, or numpy
         # Uses the backend you specified
@@ -195,8 +199,8 @@ GitHub workflow. There are a few reasons for this:
   unaffected.
 * For ``numpy.fft``, ``numpy.linalg`` and ``numpy.random``, the functions in
   the main namespace will mirror those in the ``numpy.overridable`` namespace.
-  The reason for this is that there may exist functions in the in these
-  submodules that need backends, even for ``numpy.ndarray`` inputs.
+  The reason for this is that there may exist functions in these submodules
+  that need backends, even for ``numpy.ndarray`` inputs.
 
 Advantanges of ``unumpy`` over other solutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -388,6 +392,7 @@ Other override mechanisms
 * NEP-18, the ``__array_function__`` protocol. [2]_
 * NEP-13, the ``__array_ufunc__`` protocol. [3]_
 * NEP-30, the ``__duck_array__`` protocol. [9]_
+* NEP-37, the ``__array_module__`` protocol. [11]_
 
 Existing NumPy-like array implementations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -397,6 +402,8 @@ Existing NumPy-like array implementations
 * PyData/Sparse: https://sparse.pydata.org/
 * Xnd: https://xnd.readthedocs.io/
 * Astropy's Quantity: https://docs.astropy.org/en/stable/units/
+* JAX: https://jax.readthedocs.io/en/latest/
+* Apache MXNet NDArray: https://mxnet.incubator.apache.org/api/python/docs/api/ndarray/index.html
 
 Existing and potential consumers of alternative arrays
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -591,9 +598,8 @@ Alternatives
 ------------
 
 The current alternative to this problem is a combination of NEP-18 [2]_,
-NEP-13 [4]_ and NEP-30 [9]_ plus adding more protocols (not yet specified)
-in addition to it. Even then, some parts of the NumPy API will remain
-non-overridable, so it's a partial alternative.
+NEP-13 [4]_,  NEP-30 [9]_ and NEP-37 [11]_. Even then, some parts of the NumPy
+API will remain non-overridable, so it's a partial alternative.
 
 The main alternative to vendoring ``unumpy`` is to simply move it into NumPy
 completely and not distribute it as a separate package. This would also achieve
@@ -650,6 +656,7 @@ References and Footnotes
 
 .. [10] http://scipy.github.io/devdocs/fft.html#backend-control
 
+.. [11] NEP 37 — A dispatch protocol for NumPy-like modules: https://numpy.org/neps/nep-0037-array-module.html
 
 Copyright
 ---------
